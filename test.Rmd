@@ -23,11 +23,14 @@ The test data are available here:
 
  
 I use the following libraries for this project: (set seed for consistent results)
-```{r, result=FALSE}
+```{r, result='hide'}
 suppressMessages(library(caret))
 suppressMessages(library(randomForest))
 suppressMessages(library(gbm))
 suppressMessages(library(AppliedPredictiveModeling))
+suppressMessages(library(MASS))
+suppressMessages(library(plyr))
+suppressMessages(library(dplyr))
 set.seed(123)
 ```
 
@@ -79,7 +82,7 @@ dim(training)
 
 ## Prediction Algorithms
 
-I fit (1) a random forest predictor ("rfModel" ) relating the "classe" variable to the remaining variables, (2) a boosted trees predictor ("gbmModel) and finally (3) a linear discriminant analysis model ("ldaModel"). I used the train() command in the caret package.
+I fit (1) a random forest predictor ("rfModel" ) relating the "classe" variable to the remaining variables, (2) a boosted trees predictor ("gbmModel) and finally (3) a linear discriminant analysis model ("ldaModel"). I use the train() command in the caret package.
 
 ```{r, echo=TRUE}
 # Random Forest 
@@ -94,7 +97,7 @@ ldaModel <- train(classe ~ ., method = "lda", data = training, verbose = FALSE)
 
 ## Model Evaluation
 
-I evaluated the accuracy of the different prediction models on the validation data set.
+I evaluate the accuracy of the different prediction models on the validation data set.
 ```{r, echo=TRUE}
 # Compute accuracy of the 3 Models
 pred_rf <- predict(rfModel, validation)
@@ -108,7 +111,7 @@ print (c(rf_a,gbm_a,lda_a))
 
 ## Predictions for test data
 
-Finally, I compute the predictions for the test set:
+Finally, I compute the predictions for the test set (random forest predictor):
 ```{r, echo=TRUE}
 pred_rf_test <- as.character(predict(rfModel, testing))
 print (pred_rf_test)

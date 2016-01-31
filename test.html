@@ -81,6 +81,9 @@ img {
 suppressMessages(library(randomForest))
 suppressMessages(library(gbm))
 suppressMessages(library(AppliedPredictiveModeling))
+suppressMessages(library(MASS))
+suppressMessages(library(plyr))
+suppressMessages(library(dplyr))
 set.seed(123)</code></pre>
 <p>As a first step, I download and read the training and testing data sets:</p>
 <pre class="r"><code>trainUrl &lt;-&quot;https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv&quot;
@@ -127,20 +130,18 @@ dim(training)</code></pre>
 </div>
 <div id="prediction-algorithms" class="section level2">
 <h2>Prediction Algorithms</h2>
-<p>I fit (1) a random forest predictor (“rfModel” ) relating the “classe” variable to the remaining variables, (2) a boosted trees predictor (“gbmModel) and finally (3) a linear discriminant analysis model (”ldaModel“). I used the train() command in the caret package.</p>
+<p>I fit (1) a random forest predictor (“rfModel” ) relating the “classe” variable to the remaining variables, (2) a boosted trees predictor (“gbmModel) and finally (3) a linear discriminant analysis model (”ldaModel“). I use the train() command in the caret package.</p>
 <pre class="r"><code># Random Forest 
 fitControl &lt;- trainControl(method=&quot;cv&quot;, number = 3, verboseIter = FALSE)
 rfModel  &lt;- train(classe ~ ., method = &quot;rf&quot;,  data = training, verbose = FALSE,trControl = fitControl, ntree = 250)
 # Boosted Trees
-gbmModel &lt;- train(classe ~ ., method = &quot;gbm&quot;, data = training, trControl = fitControl, verbose = FALSE)</code></pre>
-<pre><code>## Loading required package: plyr</code></pre>
-<pre class="r"><code># Linear Discriminant Analysis
+gbmModel &lt;- train(classe ~ ., method = &quot;gbm&quot;, data = training, trControl = fitControl, verbose = FALSE)
+# Linear Discriminant Analysis
 ldaModel &lt;- train(classe ~ ., method = &quot;lda&quot;, data = training, verbose = FALSE)</code></pre>
-<pre><code>## Loading required package: MASS</code></pre>
 </div>
 <div id="model-evaluation" class="section level2">
 <h2>Model Evaluation</h2>
-<p>I evaluated the accuracy of the different prediction models on the validation data set.</p>
+<p>I evaluate the accuracy of the different prediction models on the validation data set.</p>
 <pre class="r"><code># Compute accuracy of the 3 Models
 pred_rf &lt;- predict(rfModel, validation)
 pred_gbm &lt;- predict(gbmModel, validation)
@@ -154,7 +155,7 @@ print (c(rf_a,gbm_a,lda_a))</code></pre>
 </div>
 <div id="predictions-for-test-data" class="section level2">
 <h2>Predictions for test data</h2>
-<p>Finally, I compute the predictions for the test set:</p>
+<p>Finally, I compute the predictions for the test set (random forest predictor):</p>
 <pre class="r"><code>pred_rf_test &lt;- as.character(predict(rfModel, testing))
 print (pred_rf_test)</code></pre>
 <pre><code>##  [1] &quot;B&quot; &quot;A&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;E&quot; &quot;D&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;C&quot; &quot;B&quot; &quot;A&quot; &quot;E&quot; &quot;E&quot; &quot;A&quot;
